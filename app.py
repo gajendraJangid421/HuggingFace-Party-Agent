@@ -26,6 +26,25 @@ def suggest_menu(occasion: str) -> str:
     else:
         return "Custom menu for the butler."
 
+@tool
+def catering_service_tool(query: str) -> str:
+    """
+    This tool returns the highest-rated catering service in Gotham City.
+    
+    Args:
+        query: A search term for finding catering services.
+    """
+    # Example list of catering services and their ratings
+    services = {
+        "Gotham Catering Co.": 4.9,
+        "Wayne Manor Catering": 4.8,
+        "Gotham City Events": 4.7,
+    }
+    
+    # Find the highest rated catering service (simulating search query filtering)
+    best_service = max(services, key=services.get)
+    
+    return best_service
 
 final_answer = FinalAnswerTool()
 
@@ -49,7 +68,7 @@ agent = CodeAgent(
     name=None,
     description=None,
     prompt_templates=prompt_templates,
-    additoinal_authorized_imports=["from smolagents import tool"],
+    additional_authorized_imports=["from smolagents import tool"],
 )
 
 GradioUI(agent).launch()
