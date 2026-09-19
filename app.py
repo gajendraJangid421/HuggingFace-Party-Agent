@@ -1,5 +1,6 @@
 from smolagents import CodeAgent, DuckDuckGoSearchTool, FinalAnswerTool, OpenAIServerModel, load_tool, tool
 import os
+from smolagents.tools import Tool
 import yaml
 
 from Gradio_UI import GradioUI
@@ -46,7 +47,29 @@ def catering_service_tool(query: str) -> str:
     
     return best_service
 
-final_answer = FinalAnswerTool()
+class SuperheroPartyThemeTool(Tool):
+    name = "superhero_party_theme_generator"
+    description = """
+    This tool suggests creative superhero-themed party ideas based on a category.
+    It returns a unique party theme idea."""
+    
+    inputs = {
+        "category": {
+            "type": "string",
+            "description": "The type of superhero party (e.g., 'classic heroes', 'villain masquerade', 'futuristic Gotham').",
+        }
+    }
+    
+    output_type = "string"
+
+    def forward(self, category: str):
+        themes = {
+            "classic heroes": "Justice League Gala: Guests come dressed as their favorite DC heroes with themed cocktails like 'The Kryptonite Punch'.",
+            "villain masquerade": "Gotham Rogues' Ball: A mysterious masquerade where guests dress as classic Batman villains.",
+            "futuristic gotham": "Neo-Gotham Night: A cyberpunk-style party inspired by Batman Beyond, with neon decorations and futuristic gadgets."
+        }
+        
+        return themes.get(category.lower(), "Themed party idea not found. Try 'classic heroes', 'villain masquerade', or 'futuristic Gotham'.")
 
 model = OpenAIServerModel(
     model_id=os.getenv("OLLAMA_MODEL", "qwen2:7b"),
@@ -61,7 +84,7 @@ with open("prompts.yaml", 'r') as stream:
     
 agent = CodeAgent(
     model=model,
-    tools=[final_answer, DuckDuckGoSearchTool(), suggest_menu], ## add your tools here (don't remove final answer)
+    tools=[FinalAnswerTool(), DuckDuckGoSearchTool(), suggest_menu, catering_service_tool, SuperheroPartyThemeTool()], ## add your tools here (don't remove FinalAnswerTool)
     max_steps=6,
     verbosity_level=1,
     planning_interval=None,
