@@ -5,3 +5,4 @@ requests
 ddgs
 pandas
 pytz
+psycopg[binary]
