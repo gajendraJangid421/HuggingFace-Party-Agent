@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import yaml
 from smolagents import CodeAgent, OpenAIServerModel
@@ -13,6 +14,16 @@ from tools import (
 )
 
 
+def _configure_telemetry():
+    """Initialize Langfuse tracing for smolagents."""
+    from langfuse import get_client
+    from openinference.instrumentation.smolagents import SmolagentsInstrumentor
+
+    langfuse = get_client()
+    SmolagentsInstrumentor().instrument()
+    return langfuse
+
+
 def build_agent() -> CodeAgent:
     model = OpenAIServerModel(
         model_id=os.getenv("OLLAMA_MODEL", "qwen2:7b"),
@@ -22,7 +33,8 @@ def build_agent() -> CodeAgent:
         temperature=0.5,
     )
 
-    with open("prompts.yaml", "r", encoding="utf-8") as stream:
+    prompt_path = Path(__file__).resolve().parent / "prompts.yaml"
+    with prompt_path.open("r", encoding="utf-8") as stream:
         prompt_templates = yaml.safe_load(stream)
 
     return CodeAgent(
@@ -40,13 +52,18 @@ def build_agent() -> CodeAgent:
         name=None,
         description=None,
         prompt_templates=prompt_templates,
-        additional_authorized_imports=["from smolagents import tool"],
+        additional_authorized_imports=["smolagents"],
     )
 
 
 def main() -> None:
+    langfuse = _configure_telemetry()
     agent = build_agent()
-    GradioUI(agent).launch()
+    try:
+        GradioUI(agent).launch()
+    finally:
+        if langfuse is not None:
+            langfuse.flush()
 
 
 if __name__ == "__main__":

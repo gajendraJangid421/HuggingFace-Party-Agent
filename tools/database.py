@@ -46,7 +46,6 @@ def get_catering_service(query: str) -> str | None:
                 FROM catering_services
                 WHERE (%s = '' OR service_name ILIKE %s)
                 ORDER BY rating DESC
-                LIMIT 1
                 """,
                 (normalized_query, f"%{normalized_query}%"),
             )

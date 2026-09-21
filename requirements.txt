@@ -1,5 +1,7 @@
 markdownify
-smolagents==1.13.0
+smolagents==1.26.0
+langfuse==4.15.4
+openinference-instrumentation-smolagents==0.1.40
 openai
 requests
 ddgs
