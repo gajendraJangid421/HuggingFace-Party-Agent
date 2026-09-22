@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 
 import yaml
-from smolagents import CodeAgent, OpenAIServerModel
+from smolagents import CodeAgent, OpenAIServerModel, Tool
+from langchain_community.agent_toolkits.load_tools import load_tools
 
 from Gradio_UI import GradioUI
 from tools import (
@@ -13,6 +14,7 @@ from tools import (
     suggest_menu,
 )
 
+# search_tool = Tool.from_langchain(load_tools(["serpapi"])[0])
 
 def _configure_telemetry():
     """Initialize Langfuse tracing for smolagents."""
