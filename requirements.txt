@@ -1,5 +1,11 @@
 markdownify
-smolagents==1.13.0
+smolagents==1.26.0
+langchain
+langchain-community
+google-search-results
+mypy-extensions
+langfuse==4.15.4
+openinference-instrumentation-smolagents==0.1.40
 openai
 requests
 ddgs
